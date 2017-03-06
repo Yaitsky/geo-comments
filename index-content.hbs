@@ -1,4 +1,35 @@
 
 <div class="wrapper">
-
+    <div id="map" class="google-map"></div>
+    <div class="modal">
+        <header class="modal__header">
+            <div class="modal__title">
+                <i class="fa fa-map-marker location-icon" aria-hidden="true"></i>
+                Невский пр., 78, Санкт-Петербург, 191025
+            </div>
+            <i class="fa fa-times close-button" aria-hidden="true"></i>
+        </header>
+        <section class="comments">
+            <ul class="comments__list">
+                <li class="comments__item">
+                    <span class="comments__name">svetlana</span>
+                    <span class="comments__info">Шоколадница 13.12.2016</span>
+                    <div class="comments__block">
+                        Очень хорошее место!
+                    </div>
+                </li>
+            </ul>
+        </section>
+        <section class="add-comment">
+            <div class="add-comment__title">
+                Ваш отзыв
+            </div>
+            <input type="text" class="add-comment__input" placeholder="Укажите Ваше имя">
+            <input type="text" class="add-comment__input" placeholder="Укажите место">
+            <textarea placeholder="Оставьте Ваш отзыв"  name="text" id="comment-text" cols="30" rows="10" class="add-comment__text"></textarea>
+        </section>
+        <footer class="modal__footer">
+            <button class="add-button">Добавить</button>
+        </footer>
+    </div>
 </div>

@@ -1,3 +1,189 @@
 body, html {
-	
-   }
+   width:100%;
+   height:100%;
+   margin:0;
+   padding:0;
+}
+
+.wrapper {
+   height:100%;
+   widht:100%;
+   position:relative;
+}
+
+.google-map {
+   height:100%;
+   widht:100%;
+   z-index: 1;
+}
+
+.modal {
+   display:none;
+   width:380px;
+   z-index:10;
+   position:absolute;
+   background-color: #fff;
+   border-radius: 5px;
+   box-shadow: 1px 3px 5px rgba(0,0,0, 0.2);
+}
+
+.location-icon {
+   font-size:16px;
+}
+
+.close-button {
+   display:block;
+   font-size:25px;
+   color:#fff;
+   cursor:pointer;
+}
+
+.close-button:hover {
+   opacity:0.6;
+}
+
+.modal__header {
+   box-sizing: border-box;
+   padding: 0 10px;
+   border-radius: 5px 5px 0 0;
+   height:45px;
+   width:100%;
+   display:flex;
+   justify-content: space-between;
+   align-items: center;
+   background-color: #ff8663;
+}
+
+.modal__title {
+   color:#fff;
+   font-family:'Fira Sans';
+   font-size:14px;
+}
+
+.comments {
+
+}
+
+.comments__list {
+   border-bottom:1px solid #f0f0f0;
+   padding:15px 0;
+   margin:0 auto;
+   width:350px;
+   height:150px;
+   list-style-type: none;
+   overflow-y: scroll;
+}
+
+.comments__item {
+   margin-bottom:15px;
+}
+
+.comments__item:last-child {
+   margin-bottom:0;
+}
+
+.comments__name {
+   color:#353535;
+   font-family:'Fira Sans';
+   font-size:15px;
+   font-weight: 600;
+}
+
+.comments__info {
+   margin-left:5px;
+   color:#4f4f4f;
+   font-family:'Fira Sans';
+   font-size:15px;
+   font-weight: 600;
+}
+
+.comments__block {
+   color:#4f4f4f;
+   font-family:'Fira Sans';
+   font-size:14px;
+   font-weight: 300;
+}
+
+.add-comment {
+   width:350px;
+   margin:0 auto;
+   padding:15px 0 0 0;
+}
+
+.add-comment__title {
+   color:#ff8663;
+   font-family:'Fira Sans';
+   font-size:16px;
+   font-weight: bold;
+   text-transform: uppercase;
+}
+
+.add-comment__input {
+   margin:10px 0;
+   color:#4f4f4f;
+   font-family:'Fira Sans';
+   font-size:14px;
+   font-weight: 300;
+   height:32px;
+   display:block;
+   width:100%;
+   border-radius: 25px;
+   border:1px solid #a9a9a9;
+   padding:0 15px;
+   box-sizing: border-box;
+}
+
+.add-comment__input:focus {
+   outline:none;
+   border:1px solid #ff8663;
+}
+
+.add-comment__text {
+   height:110px;
+   width:350px;
+   border-radius: 25px;
+   padding:10px 15px;
+   box-sizing: border-box;
+   border:1px solid #a9a9a9;
+   resize: none;
+   color:#4f4f4f;
+   font-family:'Fira Sans';
+   font-size:14px;
+   font-weight: 300;
+}
+
+.add-comment__text:focus {
+   outline:none;
+   border:1px solid #ff8663;
+}
+
+.modal__footer {
+   width:100%;
+   text-align:right;
+   padding:10px 15px;
+   box-sizing: border-box;
+   border-radius: 0 0 5px 5px;
+}
+
+.add-button {
+   text-decoration: none;
+   color: #fff;
+   font-size: 14px;
+   font-weight: bold;
+   padding: 5px 25px;
+   background-color: #ff8663;
+   border-radius: 25px;
+   display: inline-block;
+   box-sizing: border-box;
+   border: none;
+   height: 35px;
+   cursor: pointer;
+}
+
+.add-button:hover {
+   background-color:#ff5e2f;
+}
+
+
+
+
