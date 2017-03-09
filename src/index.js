@@ -1,6 +1,7 @@
 require('./index.css');
 
 window.initMap = function() {
+    // MAP STYLES
     var styles = [
         {
             stylers: [
@@ -38,16 +39,22 @@ window.initMap = function() {
     map.mapTypes.set('map_style', styledMap);
     map.setMapTypeId('map_style');
 
-    var marker = new google.maps.Marker({
-        position: {lat: 55.747267, lng: 37.625242},
-        map: map
-    })
+    //VARIABLES
+    var modal = document.querySelector('.modal'),
+        locationTitleComments = document.querySelector('.modal__title'),
+        userNameInput = document.querySelector('.userName'),
+        locationTitleInput = document.querySelector('.locationName'),
+        commentTextInput = document.querySelector('.add-comment__text'),
+        userNameComments = document.querySelector('.comments__name'),
+        locationAndDateInfo = document.querySelector('.comments__info');
 
+    // CREATE MARKER AND COMMENTS
     map.addListener('click', function (e) {
-        console.log(e);
-        var modal = document.querySelector('.modal');
         var x = e.pixel.x;
         var y = e.pixel.y;
+        var lat = e.latLng.lat();
+        var lng = e.latLng.lng();
+
         modal.style.display = 'block';
         modal.style.top = y + 'px';
         modal.style.left = x + 'px';
@@ -59,11 +66,40 @@ window.initMap = function() {
             }
             modal.style.display = 'none';
         })
-        var marker2 = new google.maps.Marker({
-            position: {lat: e.latLng.lat(), lng: e.latLng.lng()},
-            map:map
+
+        modal.addEventListener('click', function (e) {
+            var addButton = modal.querySelector('.add-button');
+            if (e.target != addButton) {
+                return;
+            }
+            var userName = userNameInput.value,
+                locationTitle = locationTitleInput.value,
+                commentText = commentTextInput.value;
+
+            var marker2 = new google.maps.Marker({
+                position: {lat: lat, lng: lng},
+                map: map,
+                comments: []
+            })
+
+            marker2.comments.push({
+                locationTitle: locationTitle,
+                userName: userName,
+                commentText: commentText
+            })
+
+            console.log(marker2.comments);
+
+            userNameInput.value = '';
+            locationTitleInput.value = '';
+            commentTextInput.value = '';
         })
+
     })
+
+    function renderComments() {
+
+    }
 }
 
 

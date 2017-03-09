@@ -184,6 +184,10 @@ body, html {
    background-color:#ff5e2f;
 }
 
+.add-button:focus {
+   outline:none;
+}
+
 
 
 
