@@ -56,6 +56,8 @@ var mapWorker = {
         this.closeButton = this.modal.querySelector('.close-button');
         this.addButton = this.modal.querySelector('.add-button');
 
+        this.locationTitleComments = document.querySelector('.modal__title-text');
+
         this.commentsList = document.querySelector('.comments__list');
         this.userNameInput = document.querySelector('.userName');
         this.locationTitleInput = document.querySelector('.locationName');
@@ -65,6 +67,13 @@ var mapWorker = {
         // CREATE MARKER AND COMMENTS
         this.closeButton.addEventListener('click', this.closeModal.bind(this));
         this.addButton.addEventListener('click', this.addMarkerAndComment.bind(this));
+
+        var markerCluster = new MarkerClusterer(myMap, this.markersArray,
+            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m1.png'});
+
+        myMap.addListener('zoom_changed', function () {
+            self.refreshCluster();
+        })
 
         myMap.addListener('click', function (e) {
             var x = window.event.pageX;
@@ -78,9 +87,8 @@ var mapWorker = {
             var geocoder = new google.maps.Geocoder();
             geocoder.geocode({'location': latlng}, function (results, status) {
                 if (status === google.maps.GeocoderStatus.OK) {
-                    this.locationAddress = results[0].formatted_address;
-                    this.locationTitleComments = document.querySelector('.modal__title-text');
-                    this.locationTitleComments.innerText = this.locationAddress;
+                    mapWorker.locationAddress = results[0].formatted_address;
+                    mapWorker.locationTitleComments.innerText = mapWorker.locationAddress;
                 }
             })
 
@@ -89,6 +97,7 @@ var mapWorker = {
             self.modal.style.display = 'block';
             self.modal.style.top = y + 'px';
             self.modal.style.left = x + 'px';
+
         });
     },
     closeModal: function () {
@@ -106,6 +115,8 @@ var mapWorker = {
                 map: myMap,
                 comments: []
             });
+
+            this.markersArray[this.markersCounter].location = this.locationAddress;
 
             this.markersArray[this.markersCounter].comments.push({
                 locationTitle: locationTitle,
@@ -126,11 +137,14 @@ var mapWorker = {
 
             this.lats = [];
             this.lngs = [];
-
             for (var i = 0; i < this.markersArray.length; i++) {
                 this.lats.push(this.markersArray[i].position.lat());
                 this.lngs.push(this.markersArray[i].position.lng());
             }
+
+            //marker clustering
+
+            this.refreshCluster();
 
         } else {
             var markerIndex;
@@ -195,11 +209,23 @@ var mapWorker = {
         mapWorker.currentIndex = mapWorker.lats.indexOf(this.position.lat());
         mapWorker.clickOnMarkerFlag = true;
 
+        mapWorker.locationTitleComments.innerText = this.location;
         mapWorker.modal.style.display = 'block';
         mapWorker.modal.style.top = y + 'px';
         mapWorker.modal.style.left = x + 'px';
 
         mapWorker.commentsList.innerHTML = mapWorker.createComments(this.comments);
+    },
+    refreshCluster: function () {
+        var mcOptions = {styles: [{
+            height: 66,
+            url: "https://www.lodge.co.nz/realestate/assets/images/m3.png",
+            width: 66,
+            textSize: 13,
+            textColor: '#ffffff'
+        }]};
+
+        var markerCluster = new MarkerClusterer(myMap, this.markersArray, mcOptions);
     }
 }
 
