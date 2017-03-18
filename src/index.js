@@ -1,4 +1,5 @@
 require('./index.css');
+require('./markerclusterer.js');
 
 var myMap;
 window.initMap = function() {
@@ -48,7 +49,7 @@ var mapWorker = {
     markersCounter: 0,
     lats: [],
     lngs: [],
-    clickOnMarkerFlag: false,
+    clusterClicked: false,
     currentIndex: 0,
     initListeners: function() {
         //VARIABLES
@@ -68,14 +69,15 @@ var mapWorker = {
         this.closeButton.addEventListener('click', this.closeModal.bind(this));
         this.addButton.addEventListener('click', this.addMarkerAndComment.bind(this));
 
-        var markerCluster = new MarkerClusterer(myMap, this.markersArray,
-            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m1.png'});
-
         myMap.addListener('zoom_changed', function () {
             self.refreshCluster();
         })
 
         myMap.addListener('click', function (e) {
+            if (this.clusterClicked) {
+                return;
+            }
+            this.clusterClicked = false;
             var x = window.event.pageX;
             var y = window.event.pageY;
             self.lat = e.latLng.lat();
@@ -217,15 +219,32 @@ var mapWorker = {
         mapWorker.commentsList.innerHTML = mapWorker.createComments(this.comments);
     },
     refreshCluster: function () {
-        var mcOptions = {styles: [{
-            height: 66,
-            url: "https://www.lodge.co.nz/realestate/assets/images/m3.png",
-            width: 66,
-            textSize: 13,
-            textColor: '#ffffff'
-        }]};
+        var mcOptions = {
+                styles: [{
+                    height: 66,
+                    url: "https://www.lodge.co.nz/realestate/assets/images/m3.png",
+                    width: 66,
+                    textSize: 13,
+                    textColor: '#ffffff'
+                    }],
+                zoomOnClick: false
+            };
 
         var markerCluster = new MarkerClusterer(myMap, this.markersArray, mcOptions);
+
+        google.maps.event.addListener(markerCluster, "clusterclick", function (e) {
+            var clusterData = [];
+
+            for (var i = 0; i < e.markers_.length; i++) {
+                var item = {
+                    location: e.markers_[i].location,
+                    comments: e.markers_[i].comments
+                }
+                clusterData.push(item);
+            }
+
+            console.log(clusterData);
+        });
     }
 }
 
