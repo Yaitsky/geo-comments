@@ -113,7 +113,6 @@ var mapWorker = {
             self.modal.style.display = 'block';
             self.modal.style.top = y + 'px';
             self.modal.style.left = x + 'px';
-
         });
     },
     closeModal: function () {
@@ -124,8 +123,22 @@ var mapWorker = {
             locationTitle = this.locationTitleInput.value,
             commentText = this.commentTextInput.value;
 
-        if (this.lats.indexOf(this.lat) < 0 && this.lngs.indexOf(this.lng) < 0) {
+        //проверка на то, что на модальное окно вышли со слайдера или щелчком на маркер
+        var indexForNewLocation;
+        var newLat,
+            newLng;
+        if (this.clickOnMarkerFlag === true) {
+            indexForNewLocation = this.currentIndex;
+            newLat = this.lats[this.currentIndex],
+            newLng = this.lngs[this.currentIndex];
+        } else {
+            indexForNewLocation = this.markersCounter - 1;
+            newLat = this.lat;
+            newLng = this.lng;
+        }
 
+        if (this.lats.indexOf(this.lat) < 0 && this.lngs.indexOf(this.lng) < 0) {
+            // первое условие - проверка текущих координат, на старом ли месте маркер
             this.markersArray[this.markersCounter] = new google.maps.Marker({
                 position: {lat: this.lat, lng: this.lng},
                 map: myMap,
@@ -148,9 +161,45 @@ var mapWorker = {
             this.commentsList.innerHTML = this.createComments(this.markersArray[this.markersCounter].comments);
 
             this.markersArray[this.markersCounter].addListener('click', this.clickOnMarkerAndShowModal);
-
+            //счетчик для создания новых маркеров в массиве
             this.markersCounter++;
+            //здесь обновляется массив координат (он понадобится для дальнейщих проверок - первое условие)
+            this.lats = [];
+            this.lngs = [];
+            for (var i = 0; i < this.markersArray.length; i++) {
+                this.lats.push(this.markersArray[i].position.lat());
+                this.lngs.push(this.markersArray[i].position.lng());
+            }
 
+            this.refreshCluster();
+
+        } else if (this.markersArray[indexForNewLocation].comments[0].locationTitle !== locationTitle) {
+            //второе условие - проверка на место отзыва, если оно не повторяется, то создается новый маркер
+            this.markersArray[this.markersCounter] = new google.maps.Marker({
+                position: {lat: newLat, lng: newLng},
+                map: myMap,
+                comments: []
+            });
+
+            this.markersArray[this.markersCounter].location = this.locationAddress;
+
+            this.markersArray[this.markersCounter].comments.push({
+                locationTitle: locationTitle,
+                userName: userName,
+                commentText: commentText,
+                commentDate: this.getCommentDate()
+            });
+
+            this.userNameInput.value = '';
+            this.locationTitleInput.value = '';
+            this.commentTextInput.value = '';
+
+            this.commentsList.innerHTML = this.createComments(this.markersArray[this.markersCounter].comments);
+
+            this.markersArray[this.markersCounter].addListener('click', this.clickOnMarkerAndShowModal);
+            //счетчик для создания новых маркеров в массиве
+            this.markersCounter++;
+            //здесь обновляется массив координат (он понадобится для дальнейщих проверок - первое условие)
             this.lats = [];
             this.lngs = [];
             for (var i = 0; i < this.markersArray.length; i++) {
@@ -161,6 +210,7 @@ var mapWorker = {
             this.refreshCluster();
 
         } else {
+            //последнее условие - просто добавляем отзывы к имеющимся маркерам
             var markerIndex;
             if (this.clickOnMarkerFlag === true) {
                 markerIndex = this.currentIndex;
@@ -190,6 +240,7 @@ var mapWorker = {
         });
     },
     getCommentDate: function () {
+        //получаем дату в нужном формате
         var Data = new Date();
         var year = Data.getFullYear();
         var month = Data.getMonth();
@@ -217,6 +268,7 @@ var mapWorker = {
         return currentDate;
     },
     clickOnMarkerAndShowModal: function () {
+        //показываем модальное окно по щелчку на маркер, используем флажок для контроля
         var x = window.event.pageX;
         var y = window.event.pageY;
 
@@ -231,6 +283,7 @@ var mapWorker = {
         mapWorker.commentsList.innerHTML = mapWorker.createComments(this.comments);
     },
     refreshCluster: function () {
+        //обновляем кластеры и вешаем на них обработчики на открытие окна-слайдера
         var mcOptions = {
                 styles: [{
                     height: 66,
@@ -269,6 +322,7 @@ var mapWorker = {
         this.slider.style.display = 'none';
     },
     renderSliderWindow: function (index) {
+        //рендерим окно-слайдера по нужному номеру маркера в кластере
         mapWorker.currentSlide = index;
         mapWorker.sliderAddress.innerText = mapWorker.clusterData[index].location;
         mapWorker.sliderLocation.innerText = mapWorker.clusterData[index].comments[0].locationTitle;
@@ -279,6 +333,7 @@ var mapWorker = {
         mapWorker.sliderMarkersList.querySelectorAll('.markers__item')[index].style.color = '#ff8663';
     },
     renderMarkers: function (length) {
+        //рендерим список маркеров - табуляцию в слайдере и вешаем обработчики, меняем стили
         mapWorker.sliderMarkersList.innerHTML = '';
         for (var i = 0; i < length; i++) {
             var item = document.createElement('li');
@@ -314,6 +369,7 @@ var mapWorker = {
         }
     },
     openCommentsModal: function () {
+        //показываем модальное окно по кнопке из слайдера, используем флажок для контроля
         mapWorker.slider.style.display = 'none';
 
         var x = window.event.pageX;
