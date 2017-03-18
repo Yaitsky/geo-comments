@@ -60,10 +60,6 @@ body, html {
    font-size:14px;
 }
 
-.comments {
-
-}
-
 .comments__list {
    border-bottom:1px solid #f0f0f0;
    padding:15px 0;
@@ -187,6 +183,137 @@ body, html {
 .add-button:focus {
    outline:none;
 }
+
+.slider {
+   display:none;
+   position:absolute;
+   top:50%;
+   left:50%;
+   background-color: #fff;
+   border-radius: 5px;
+   box-shadow: 1px 3px 5px rgba(0,0,0, 0.2);
+   width:380px;
+   height:320px;
+   z-index:2;
+}
+
+.slider__header {
+   box-sizing: border-box;
+   padding: 0 10px;
+   border-radius: 5px 5px 0 0;
+   height:45px;
+   width:100%;
+   display:flex;
+   justify-content: space-between;
+   align-items: center;
+   background-color: #ff8663;
+}
+
+.close-slider {
+   display:block;
+   font-size:25px;
+   color:#fff;
+   cursor:pointer;
+}
+
+.close-slider:hover {
+   opacity:0.6;
+}
+
+.slider__title {
+   color:#fff;
+   font-family:'Fira Sans';
+   font-size:18px;
+}
+
+.comments__list--slider {
+   height:170px;
+   box-sizing: border-box;
+   width:330px;
+   padding:5px 0;
+}
+
+.slider__footer {
+   width:100%;
+   height:45px;
+   box-sizing: border-box;
+   border-radius: 0 0 5px 5px;
+}
+
+.markers {
+   width:330px;
+   height:45px;
+   padding:0;
+   margin:0 auto;
+   list-style-type: none;
+   display:flex;
+   align-content: center;
+   justify-content: space-around;
+}
+
+.markers__item {
+   text-align:center;
+   display:block;
+   color:#000;
+   font-family:'Fira Sans';
+   font-size:16px;
+   line-height:45px;
+   height:100%;
+   box-sizing: border-box;
+   width:30px;
+   cursor:pointer;
+}
+
+.markers__item--active {
+   color:#ff8663;
+}
+
+.markers__item:hover {
+   color:#ff8663;
+}
+
+.previous-slide {
+   position:absolute;
+   color:#ff8663;
+   display:block;
+   font-size:35px;
+   left:5px;
+   top:50%;
+   transform: translate(0, -50%);
+   cursor:pointer;
+}
+
+.next-slide {
+   position:absolute;
+   color:#ff8663;
+   display:block;
+   font-size:35px;
+   right:5px;
+   top:50%;
+   transform: translate(0, -50%);
+   cursor:pointer;
+}
+
+.next-slide:hover, .previous-slide:hover {
+   opacity:0.5;
+}
+
+.location-title {
+   height:60px;
+   color:#000;
+   font-family:'Fira Sans';
+   font-size:15px;
+   line-height: 30px;
+   padding:0 25px;
+   box-sizing: border-box;
+   cursor:pointer;
+}
+
+.location-title:hover {
+   text-decoration: underline;
+}
+
+
 
 
 

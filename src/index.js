@@ -51,33 +51,47 @@ var mapWorker = {
     lngs: [],
     clusterClicked: false,
     currentIndex: 0,
+    clusterData: [],
+    currentSlide: 0,
     initListeners: function() {
-        //VARIABLES
+        var self = this;
+
+        //slider-window
+        this.slider = document.querySelector('.slider');
+        this.closeSlider = this.slider.querySelector('.close-slider');
+        this.prevSlideButton = this.slider.querySelector('.previous-slide');
+        this.nextSlideButton = this.slider.querySelector('.next-slide');
+        this.sliderLocation = this.slider.querySelector('.slider__title');
+        this.sliderMarkersList = this.slider.querySelector('.markers');
+        this.sliderAddress = this.slider.querySelector('.location-title');
+        this.sliderComments = this.slider.querySelector('.comments__list--slider');
+
+        //modal-window
         this.modal = document.querySelector('.modal');
         this.closeButton = this.modal.querySelector('.close-button');
         this.addButton = this.modal.querySelector('.add-button');
-
         this.locationTitleComments = document.querySelector('.modal__title-text');
-
         this.commentsList = document.querySelector('.comments__list');
         this.userNameInput = document.querySelector('.userName');
         this.locationTitleInput = document.querySelector('.locationName');
         this.commentTextInput = document.querySelector('.add-comment__text');
 
-        var self = this;
-        // CREATE MARKER AND COMMENTS
+        //clusters - slider events
+        this.closeSlider.addEventListener('click', this.closeSliderWindow.bind(this));
+        this.prevSlideButton.addEventListener('click', this.prevSlide);
+        this.nextSlideButton.addEventListener('click', this.nextSlide);
+        this.sliderAddress.addEventListener('click', this.openCommentsModal);
+
+        // modal events
         this.closeButton.addEventListener('click', this.closeModal.bind(this));
         this.addButton.addEventListener('click', this.addMarkerAndComment.bind(this));
 
+        // map events
         myMap.addListener('zoom_changed', function () {
             self.refreshCluster();
         })
 
         myMap.addListener('click', function (e) {
-            if (this.clusterClicked) {
-                return;
-            }
-            this.clusterClicked = false;
             var x = window.event.pageX;
             var y = window.event.pageY;
             self.lat = e.latLng.lat();
@@ -143,8 +157,6 @@ var mapWorker = {
                 this.lats.push(this.markersArray[i].position.lat());
                 this.lngs.push(this.markersArray[i].position.lng());
             }
-
-            //marker clustering
 
             this.refreshCluster();
 
@@ -233,18 +245,88 @@ var mapWorker = {
         var markerCluster = new MarkerClusterer(myMap, this.markersArray, mcOptions);
 
         google.maps.event.addListener(markerCluster, "clusterclick", function (e) {
-            var clusterData = [];
+            mapWorker.clusterData = [];
 
             for (var i = 0; i < e.markers_.length; i++) {
                 var item = {
                     location: e.markers_[i].location,
                     comments: e.markers_[i].comments
                 }
-                clusterData.push(item);
+                mapWorker.clusterData.push(item);
             }
 
-            console.log(clusterData);
+            var x = window.event.pageX;
+            var y = window.event.pageY;
+            mapWorker.slider.style.display = 'block';
+            mapWorker.slider.style.top = y + 'px';
+            mapWorker.slider.style.left = x + 'px';
+
+            mapWorker.renderMarkers(mapWorker.clusterData.length);
+            mapWorker.renderSliderWindow(0);
         });
+    },
+    closeSliderWindow: function () {
+        this.slider.style.display = 'none';
+    },
+    renderSliderWindow: function (index) {
+        mapWorker.currentSlide = index;
+        mapWorker.sliderAddress.innerText = mapWorker.clusterData[index].location;
+        mapWorker.sliderLocation.innerText = mapWorker.clusterData[index].comments[0].locationTitle;
+        mapWorker.sliderComments.innerHTML = mapWorker.createComments(mapWorker.clusterData[index].comments);
+        for (var i = 0; i < mapWorker.sliderMarkersList.querySelectorAll('.markers__item').length; i++) {
+            mapWorker.sliderMarkersList.querySelectorAll('.markers__item')[i].style.color = '#000';
+        }
+        mapWorker.sliderMarkersList.querySelectorAll('.markers__item')[index].style.color = '#ff8663';
+    },
+    renderMarkers: function (length) {
+        mapWorker.sliderMarkersList.innerHTML = '';
+        for (var i = 0; i < length; i++) {
+            var item = document.createElement('li');
+            item.classList.add('markers__item');
+            var index = i + 1;
+            item.innerText = index.toString();
+            mapWorker.sliderMarkersList.appendChild(item);
+
+            item.addEventListener('click', function (e) {
+                var newIndex = Number(e.target.innerText) - 1;
+                mapWorker.renderSliderWindow(newIndex);
+
+                for (var i = 0; i < mapWorker.sliderMarkersList.querySelectorAll('.markers__item').length; i++) {
+                    mapWorker.sliderMarkersList.querySelectorAll('.markers__item')[i].style.color = '#000';
+                }
+
+                mapWorker.sliderMarkersList.querySelectorAll('.markers__item')[newIndex].style.color = '#ff8663';
+            })
+        }
+    },
+    prevSlide: function () {
+        if (mapWorker.currentSlide > 0) {
+            mapWorker.renderSliderWindow(mapWorker.currentSlide - 1);
+        } else {
+            mapWorker.renderSliderWindow(mapWorker.clusterData.length - 1);
+        }
+    },
+    nextSlide: function () {
+        if (mapWorker.currentSlide < mapWorker.clusterData.length - 1) {
+            mapWorker.renderSliderWindow(mapWorker.currentSlide + 1);
+        } else {
+            mapWorker.renderSliderWindow(0);
+        }
+    },
+    openCommentsModal: function () {
+        mapWorker.slider.style.display = 'none';
+
+        var x = window.event.pageX;
+        var y = window.event.pageY;
+
+        mapWorker.currentIndex = mapWorker.currentSlide;
+        mapWorker.clickOnMarkerFlag = true;
+
+        mapWorker.modal.style.display = 'block';
+        mapWorker.modal.style.top = y + 'px';
+        mapWorker.modal.style.left = x + 'px';
+        mapWorker.locationTitleComments.innerText = mapWorker.clusterData[mapWorker.currentSlide].location;
+        mapWorker.commentsList.innerHTML = mapWorker.createComments(mapWorker.clusterData[mapWorker.currentSlide].comments);
     }
 }
 
