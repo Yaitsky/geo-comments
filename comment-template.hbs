@@ -1,0 +1,10 @@
+{{#each comments}}
+    <li class="comments__item">
+        <span class="comments__name">{{userName}}</span>
+        <span class="comments__info">{{locationTitle}}</span>
+        <span class="comments__info">{{commentDate}}</span>
+        <div class="comments__block">
+            {{commentText}}
+        </div>
+    </li>
+{{/each}}
