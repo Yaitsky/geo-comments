@@ -115,6 +115,9 @@ var mapWorker = {
             self.modal.style.left = x + 'px';
         });
     },
+    getCoordsOfWindow: function() {
+
+    },
     closeModal: function () {
         this.modal.style.display = 'none';
     },
@@ -144,9 +147,10 @@ var mapWorker = {
                 map: myMap,
                 comments: []
             });
-
+            //добавляем к маркеру информацию о геопозиции и счетчик маркеров (будет использован для доступа)
             this.markersArray[this.markersCounter].location = this.locationAddress;
-
+            this.markersArray[this.markersCounter].index = this.markersCounter;
+            //добавляем объект комментария
             this.markersArray[this.markersCounter].comments.push({
                 locationTitle: locationTitle,
                 userName: userName,
@@ -180,9 +184,10 @@ var mapWorker = {
                 map: myMap,
                 comments: []
             });
-
+            //добавляем к маркеру информацию о геопозиции и счетчик маркеров (будет использован для доступа)
             this.markersArray[this.markersCounter].location = this.locationAddress;
-
+            this.markersArray[this.markersCounter].index = this.markersCounter;
+            //добавляем объект комментария
             this.markersArray[this.markersCounter].comments.push({
                 locationTitle: locationTitle,
                 userName: userName,
@@ -208,7 +213,6 @@ var mapWorker = {
             }
 
             this.refreshCluster();
-
         } else {
             //последнее условие - просто добавляем отзывы к имеющимся маркерам
             var markerIndex;
@@ -303,6 +307,7 @@ var mapWorker = {
             for (var i = 0; i < e.markers_.length; i++) {
                 var item = {
                     location: e.markers_[i].location,
+                    index: e.markers_[i].index,
                     comments: e.markers_[i].comments
                 }
                 mapWorker.clusterData.push(item);
@@ -375,7 +380,7 @@ var mapWorker = {
         var x = window.event.pageX;
         var y = window.event.pageY;
 
-        mapWorker.currentIndex = mapWorker.currentSlide;
+        mapWorker.currentIndex = mapWorker.clusterData[mapWorker.currentSlide].index;
         mapWorker.clickOnMarkerFlag = true;
 
         mapWorker.modal.style.display = 'block';
