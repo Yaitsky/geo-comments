@@ -92,11 +92,11 @@ var mapWorker = {
         })
 
         myMap.addListener('click', function (e) {
-            var x = window.event.pageX;
-            var y = window.event.pageY;
+            var x = self.getCoordsForWindow('modal').x;
+            var y = self.getCoordsForWindow('modal').y;
+
             self.lat = e.latLng.lat();
             self.lng = e.latLng.lng();
-            this.clickOnMarkerFlag = false;
 
             //reverse  geocoding to get address
             var latlng = {lat: self.lat, lng: self.lng};
@@ -115,8 +115,35 @@ var mapWorker = {
             self.modal.style.left = x + 'px';
         });
     },
-    getCoordsOfWindow: function() {
+    getCoordsForWindow: function (flag) {
+        var x = window.event.pageX;
+        var y = window.event.pageY;
 
+        var width,
+            height;
+
+        if (flag == 'modal') {
+            width = 380;
+            height = 525;
+        } else {
+            width = 380;
+            height = 320;
+        }
+
+        if (x + width > document.documentElement.clientWidth) {
+            var deltaX = document.documentElement.clientWidth - x - width - 25;
+            x = x + deltaX;
+        }
+
+        if (y + height > document.documentElement.clientHeight) {
+            var deltaY = document.documentElement.clientHeight - y - height - 25;
+            y = y + deltaY;
+        }
+
+        return {
+            x: x,
+            y: y
+        }
     },
     closeModal: function () {
         this.modal.style.display = 'none';
@@ -273,8 +300,8 @@ var mapWorker = {
     },
     clickOnMarkerAndShowModal: function () {
         //показываем модальное окно по щелчку на маркер, используем флажок для контроля
-        var x = window.event.pageX;
-        var y = window.event.pageY;
+        var x = mapWorker.getCoordsForWindow('modal').x;
+        var y = mapWorker.getCoordsForWindow('modal').y;
 
         mapWorker.currentIndex = mapWorker.lats.indexOf(this.position.lat());
         mapWorker.clickOnMarkerFlag = true;
@@ -313,8 +340,9 @@ var mapWorker = {
                 mapWorker.clusterData.push(item);
             }
 
-            var x = window.event.pageX;
-            var y = window.event.pageY;
+            var x = mapWorker.getCoordsForWindow('slider').x;
+            var y = mapWorker.getCoordsForWindow('slider').y;
+
             mapWorker.slider.style.display = 'block';
             mapWorker.slider.style.top = y + 'px';
             mapWorker.slider.style.left = x + 'px';
@@ -377,8 +405,8 @@ var mapWorker = {
         //показываем модальное окно по кнопке из слайдера, используем флажок для контроля
         mapWorker.slider.style.display = 'none';
 
-        var x = window.event.pageX;
-        var y = window.event.pageY;
+        var x = mapWorker.getCoordsForWindow('modal').x;
+        var y = mapWorker.getCoordsForWindow('modal').y;
 
         mapWorker.currentIndex = mapWorker.clusterData[mapWorker.currentSlide].index;
         mapWorker.clickOnMarkerFlag = true;
